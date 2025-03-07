@@ -1,12 +1,10 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRoutes from "./routes/user.js";
 import jobRoutes from "./routes/job.js";
-import log from "./middleware/log.js";
-import { errorLogger } from "./middleware/log.js";
+import log, { errorLogger } from "./middleware/log.js";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -15,8 +13,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(log);
 app.use(errorLogger);
@@ -37,13 +35,11 @@ app.use((err, req, res, next) => {
 // Connect to MongoDB
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(process.env.MONGODB_URI);
         console.log("Connected to MongoDB");
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
+        process.exit(1); // Exit the process if MongoDB connection fails
     }
 };
 
