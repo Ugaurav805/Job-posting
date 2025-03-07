@@ -4,6 +4,9 @@ import path from 'path';
 export default function log(req, res, next) {
     const date = new Date();
     const logFile = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.log`;
+    
+    // Fix for __dirname not being defined in ES modules
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
     const logFilePath = path.resolve(__dirname, 'logs', logFile); // Resolve to absolute path
     
     fs.appendFile(logFilePath, `${req.method} ${req.url} ${req.ip}\n`, (err) => {
@@ -15,6 +18,9 @@ export default function log(req, res, next) {
 export function errorLogger(err, req, res, next) {
     const date = new Date();
     const logFile = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-error.log`;
+
+    // Fix for __dirname not being defined in ES modules
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
     const logFilePath = path.resolve(__dirname, 'logs', logFile); // Resolve to absolute path
 
     const errorLog = `[${date.toISOString()}] ${err.stack || err.message}\n`;
